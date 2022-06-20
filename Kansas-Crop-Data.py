@@ -23,7 +23,7 @@ import FOUR_Table_Generator
 import FOUR_Field_Frequency_Distribution
 
 # year = input("Type the year you would like to generate data for: ")
-year = "2020"
+year = "2016"
 generate_graphs = "0"
 
 print("Generating survey based data...")
@@ -60,8 +60,8 @@ if generate_graphs == "1":
         normalized_state_values, thresholds)
 
 county_distributions = FOUR_Field_Frequency_Distribution.data_generator(thresholds, county_csv, year)
-FOUR_Field_Frequency_Distribution.plot_counties(thresholds, county_distributions, year, counties)
+# FOUR_Field_Frequency_Distribution.plot_counties(thresholds, county_distributions, year, counties)
 
 
 # FOUR_Table_Generator.table_generator(necessary_csv, normalized_yearly_value_per_threshold, thresholds, normalized_state_values)
-
+FOUR_Table_Generator.county_distribution(counties, thresholds,county_distributions)
