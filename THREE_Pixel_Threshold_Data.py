@@ -270,7 +270,7 @@ def extract_pixel_threshold_data(county_csv, years, year):
     # print(counties_with_data.index('SCOTT'))
     # print(survey_year_values.index(102000))
     return normalized_yearly_value_per_threshold, survey_year_values, thresholds, necessary_csv, \
-        yearly_value_per_threshold
+        yearly_value_per_threshold, counties_with_data
 
 
 def generate_state_data(yearly_value_per_threshold, survey_year_values):

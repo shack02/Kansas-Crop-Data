@@ -11,7 +11,6 @@ def extract_survey_data():
 
     counties = df["County"].unique().tolist()
     counties.sort()
-    print('***HERE***')
     print(counties)
 
     values_for_each_county = []

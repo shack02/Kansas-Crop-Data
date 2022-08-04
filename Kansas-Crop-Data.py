@@ -21,9 +21,10 @@ import ONE_Survey_Data_Generator
 import THREE_Pixel_Data_Generator
 import FOUR_Table_Generator
 import FOUR_Field_Frequency_Distribution
+import FOUR_Threshold_Simple_Majority_Comparison
 
 # year = input("Type the year you would like to generate data for: ")
-year = "2016"
+year = "2020"
 generate_graphs = "0"
 
 print("Generating survey based data...")
@@ -45,8 +46,8 @@ if generate_graphs == "1":
     THREE_Pixel_Data_Generator.plot_pixel_graphs(county_csv, years, pixel_yearly_values)
 
 print("Generating pixel threshold data...")
-normalized_yearly_value_per_threshold, survey_year_values, thresholds, necessary_csv, yearly_value_per_threshold \
-    = THREE_Pixel_Threshold_Data.extract_pixel_threshold_data(county_csv, years, year)
+normalized_yearly_value_per_threshold, survey_year_values, thresholds, necessary_csv, yearly_value_per_threshold, \
+    counties_with_data = THREE_Pixel_Threshold_Data.extract_pixel_threshold_data(county_csv, years, year)
 
 print("Generating state threshold data...")
 normalized_state_values = THREE_Pixel_Threshold_Data.generate_state_data(yearly_value_per_threshold, survey_year_values)
@@ -60,8 +61,19 @@ if generate_graphs == "1":
         normalized_state_values, thresholds)
 
 county_distributions = FOUR_Field_Frequency_Distribution.data_generator(thresholds, county_csv, year)
-# FOUR_Field_Frequency_Distribution.plot_counties(thresholds, county_distributions, year, counties)
+# generate_graphs = input("Type 1 to generate graphs for frequency distribution data: ")
 
+if generate_graphs == "1":
+   FOUR_Field_Frequency_Distribution.plot_counties(thresholds, county_distributions, year, counties)
+
+closest_threshold_values = FOUR_Threshold_Simple_Majority_Comparison.get_closest_threshold_to_survey_value \
+    (yearly_value_per_threshold, survey_year_values)
+
+simple_majority_percentage, above_fifty_percent = \
+    FOUR_Threshold_Simple_Majority_Comparison.get_simple_majority(counties_with_data)
+
+FOUR_Threshold_Simple_Majority_Comparison.plot_comparisons(counties_with_data, \
+                        simple_majority_percentage, above_fifty_percent, survey_year_values, closest_threshold_values)
 
 # FOUR_Table_Generator.table_generator(necessary_csv, normalized_yearly_value_per_threshold, thresholds, normalized_state_values)
-FOUR_Table_Generator.county_distribution(counties, thresholds,county_distributions)
+# FOUR_Table_Generator.county_distribution(counties, thresholds,county_distributions)

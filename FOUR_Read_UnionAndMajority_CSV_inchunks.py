@@ -11,56 +11,49 @@ print("-- Read CSV database from Step 2: CLU_CDL_Cotton_2006-2020.csv")
 union_file_location = r"CLU_CDL_KS_2020_UNION.txt"
 majority_file_location = r"CLU_CDL_2020_MajorityCrop.txt"
 # use chunks for reading large databases to save memory
+
+i = 0
+print("-- -- chunking of majority crop file begins --"),
+majority_chunk_list = []
+for df_chunk in pd.read_csv(
+        majority_file_location,
+        chunksize=10000):
+    i += 1
+    majority_chunk_list.append(df_chunk)
+
+    print(" " + str(i)),
+
+# concatenate individual chunks in a single dataframe
+majority_crop_df = pd.concat(majority_chunk_list)
+
+print(" -- chunking ends ")
+
+# This sections adds the majority
 i = 0
 print("-- -- chunking of union file begins --"),
 df_chunk_list = []
 for df_chunk in pd.read_csv(
         union_file_location,
-        chunksize=100000):
+        chunksize=10000):
+    majority_chunk = majority_chunk_list[i]
     i += 1
+    crop_types = []
+    for value in df_chunk.columns.values:
+        if "VALUE_" in value:
+            crop_types.append(value)
+    df_chunk["MAJORITY_TYPE"] = "VALUE_" + majority_chunk["MAJORITY"].astype(str)
+    df_chunk["AREA"] = majority_chunk["AREA"].tolist()
+    df_chunk["MAJORITY_PERCENTAGE"] = df_chunk[crop_types].max(axis=1) / df_chunk["AREA"]
     df_chunk_list.append(df_chunk)
 
     print(" " + str(i)),
 
-# concatenate individual chunks in a single dataframe
 union_df = pd.concat(df_chunk_list)
-
 print(" -- chunking ends ")
 
-i = 0
-print("-- -- chunking of majority crop file begins --"),
-df_chunk_list = []
-for df_chunk in pd.read_csv(
-        majority_file_location,
-        chunksize=100000):
-    i += 1
-    df_chunk_list.append(df_chunk)
-
-    print(" " + str(i)),
-
-# concatenate individual chunks in a single dataframe
-majority_crop_df = pd.concat(df_chunk_list)
-
-print(" -- chunking ends ")
-
-
-print(union_df)
-union_df = union_df.assign(AREA=majority_crop_df['AREA'].values)
-union_df["MAJORITY"] = "VALUE_" + majority_crop_df["MAJORITY"].astype(str)
-print(union_df)
-
-majority_crop_percentages = []
-majority_rows = union_df['MAJORITY'].tolist()
-
-# gets the percentage coverage of the main crop for each field
-for row in majority_rows:
-    majority_crop_percentages\
-        .append(union_df.at[majority_rows.index(row), row]/union_df.at[majority_rows.index(row), "AREA"])
-
-union_df = union_df.assign(MAJORITY_CROP_PERCENTAGE=majority_crop_percentages)
-print(union_df)
-
-
+value_locations = union_df["MAJORITY_TYPE"].tolist()
+print(len(union_df))
+print(len(value_locations))
 # adds fipsstco column
 union_df['FIPSSTCO'] = union_df['SCTFS'].astype(str).str[0:5].tolist()
 
@@ -84,7 +77,7 @@ for county in counties:
     mask = mask.assign(County=county)
     print(mask)
     # next line generates csvs for each county
-    mask.to_csv(r"Majority Crop by County CSVs\\" + str(county) + str(county_ID[currentIndex]) + ".csv")
+    # mask.to_csv(r"Majority Crop by County CSVs\\" + str(county) + str(county_ID[currentIndex]) + ".csv")
 #
 # # next lines generate a csv with all other field data
 # mask = (union_df.loc[~union_df['FIPSSTCO'].isin(county_ID)])
