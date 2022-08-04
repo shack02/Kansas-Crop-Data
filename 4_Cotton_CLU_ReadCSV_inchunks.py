@@ -23,7 +23,7 @@ from pathlib import Path
 print("-- Read CSV database from Step 2: CLU_CDL_Cotton_2006-2020.csv")
 
 # in_clu__str =r"C:\Users\Sean\PycharmProjects\Cotton_In_Kansas\Cotton_CLU_CDL_Kansas_2006-2020.csv"
-in_clu__str = r"C:\Users\Sean\PycharmProjects\Cotton_In_Kansas\Corn_CLU_CDL_Kansas_2006-2020.csv"
+in_clu__str = r"Cotton_CLU_CDL_Kansas_2006-2020.csv"
 
 # use chunks for reading large databases to save memory
 i = 0
@@ -64,14 +64,14 @@ print(" -- chunking ends ")
 
 # adds fipsstco column
 clu__df['FIPSSTCO'] = clu__df['SCTFS'].astype(str).str[0:5].tolist()
-in_county__str = r"C:\Users\Sean\PycharmProjects\Cotton_In_Kansas\Cotton_County_Kansas.txt"
+in_county__str = r"Cotton_County_Kansas.txt"
 county__df = pd.read_csv(in_county__str)
 
 
 # add county field to dataframe
 # clu__df = clu__df.assign(col_name=
-unique_ids = clu__df['FIPSSTCO'].unique().tolist()
-print(len(unique_ids))
+# unique_ids = clu__df['FIPSSTCO'].unique().tolist()
+# print(len(unique_ids))
 county_ID, counties = ONE_get_fipsstco_number.get_county_ids_with_data()
 
 
@@ -89,9 +89,10 @@ for county in counties:
     mask = (clu__df.loc[clu__df['FIPSSTCO'] == county_ID[currentIndex]])
     mask = mask.assign(County=county)
     # next line generates csvs for each county
-    mask.to_csv(r"C:\Users\Sean\PycharmProjects\Cotton_In_Kansas\Corn County CSVs\\" + county + county_ID[currentIndex] + ".csv")
+    mask.to_csv(r"C:\Users\Sean\PycharmProjects\Kansas-Crop-Data\Cotton County CSVs\\" + county + str(county_ID[currentIndex]) + ".csv")
+
 
 # next lines generate a csv with all other field data
 mask = (clu__df.loc[~clu__df['FIPSSTCO'].isin(county_ID)])
 mask = mask.assign(County="OTHER (COMBINED) COUNTIES")
-mask.to_csv(r"C:\Users\Sean\PycharmProjects\Cotton_In_Kansas\Corn County CSVs" + "OTHER (COMBINED) COUNTIES.csv")
+mask.to_csv(r"C:\Users\Sean\PycharmProjects\Kansas-Crop-Data\Cotton County CSVs\\" + "OTHER (COMBINED) COUNTIES.csv")

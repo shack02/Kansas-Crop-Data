@@ -14,14 +14,14 @@
 #  - List of CSVs necessary for generating (necessary_csv)
 #  - Graphs of pixel values per threshold versus survey data for each county (plot_pixel_threshold_data)
 # ----------------------------------------------------------------------------------------------------------------------
-import ONE_Corn_Survey_Data
+import ONE_Get_Survey_Data
 import ONE_Survey_Data_Generator
 import matplotlib.pyplot as plt
 import pandas as pd
 
 
 def extract_pixel_threshold_data3(county_csv, years, year):
-    county_time_line, county_yearly_value, counties = ONE_Corn_Survey_Data.extract_survey_data()
+    county_time_line, county_yearly_value, counties = ONE_Get_Survey_Data.extract_survey_data()
     print("in extract pixel threshold data3")
     print(county_time_line)
     print(county_yearly_value)
@@ -126,7 +126,7 @@ def extract_pixel_threshold_data3(county_csv, years, year):
 
 
 def extract_pixel_threshold_data(county_csv, years, year):
-    county_time_line, county_yearly_value, counties = ONE_Corn_Survey_Data.extract_survey_data()
+    county_time_line, county_yearly_value, counties = ONE_Get_Survey_Data.extract_survey_data()
     print(county_csv)
     # # switch for cotton
     # county_time_line, county_yearly_value, counties = ONE_Survey_Data_Generator.extract_survey_data()
@@ -148,7 +148,7 @@ def extract_pixel_threshold_data(county_csv, years, year):
 
     full_county = []
     for county in county_csv:
-        full_county.append(county[17:-4])
+        full_county.append(county[19:-4])
 
     print(full_county)
 
@@ -191,7 +191,7 @@ def extract_pixel_threshold_data(county_csv, years, year):
         county_dfs.append(df)
 
     for county in counties_with_data:
-        new_csv = "Corn County CSVs/" + county + ".csv"
+        new_csv = "Cotton County CSVs/" + county + ".csv"
         df = pd.read_csv(new_csv)
         necessary_county_dfs.append(df)
         necessary_csv.append(new_csv)
@@ -223,9 +223,7 @@ def extract_pixel_threshold_data(county_csv, years, year):
         yearly_value_per_threshold.append(list)
         index = index + 1
 
-    # change for cotton
-    # print(yearly_value_per_threshold[necessary_csv.index(r"County CSVs/OTHER (COMBINED) COUNTIES.csv")])
-    print(yearly_value_per_threshold[necessary_csv.index(r"Corn County CSVs/OTHER (COMBINED) COUNTIES.csv")])
+    print(yearly_value_per_threshold[necessary_csv.index(r"Cotton County CSVs/OTHER (COMBINED) COUNTIES.csv")])
 
     # this loop adds the acreage of fields not in necessary counties to other combined counties at each threshold
     print("Adding pixel data from counties with no survey data to OTHER_COMBINED_COUNTIES")
@@ -248,9 +246,9 @@ def extract_pixel_threshold_data(county_csv, years, year):
                         list.append(total)
             for i in range(101):
                 # yearly_value_per_threshold[necessary_csv.index(r"County CSVs/OTHER (COMBINED) COUNTIES.csv")][i] +=\
-                yearly_value_per_threshold[necessary_csv.index(r"Corn County CSVs/OTHER (COMBINED) COUNTIES.csv")][i] +=\
+                yearly_value_per_threshold[necessary_csv.index(r"Cotton County CSVs/OTHER (COMBINED) COUNTIES.csv")][i] +=\
                     list[i]
-    print(yearly_value_per_threshold[necessary_csv.index(r"Corn County CSVs/OTHER (COMBINED) COUNTIES.csv")])
+    print(yearly_value_per_threshold[necessary_csv.index(r"Cotton County CSVs/OTHER (COMBINED) COUNTIES.csv")])
 
 
     # this list contains the normalized pixel values based on survey data for each county

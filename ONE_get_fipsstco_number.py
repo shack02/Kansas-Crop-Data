@@ -1,5 +1,5 @@
 import pandas as pd
-import ONE_Corn_Survey_Data
+import ONE_Get_Survey_Data
 
 
 def get_county_ids_with_data():
@@ -12,20 +12,20 @@ def get_county_ids_with_data():
     counties = sorted(counties)
     county_ID = sorted(county_ID)
 
-    years_for_each_county, values_for_each_county, counties_with_data = ONE_Corn_Survey_Data.extract_survey_data()
+    years_for_each_county, values_for_each_county, counties_with_data = ONE_Get_Survey_Data.extract_survey_data()
 
     counties = [county.upper() for county in counties]
 
-    return county_ID, counties
+    # return county_ID, counties
 
-    # county_id_with_data = []
-    # proper_counties = []
-    # for county in counties:
-    #     i = counties.index(county)
-    #     for county2 in counties_with_data:
-    #         if county2 == county:
-    #             county_id_with_data.append(str(county_ID[i]))
-    #             proper_counties.append(county)
-    #
-    # return county_id_with_data, proper_counties
+    county_id_with_data = []
+    proper_counties = []
+    for county in counties:
+        i = counties.index(county)
+        for county2 in counties_with_data:
+            if county2 == county:
+                county_id_with_data.append(str(county_ID[i]))
+                proper_counties.append(county)
+
+    return county_id_with_data, proper_counties
 

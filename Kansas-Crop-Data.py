@@ -15,7 +15,7 @@
 # as cotton before that fields total acreage is added to the counties total acres of cotton planted.
 #
 # ----------------------------------------------------------------------------------------------------------------------
-import ONE_Corn_Survey_Data
+import ONE_Get_Survey_Data
 import THREE_Pixel_Threshold_Data
 import ONE_Survey_Data_Generator
 import THREE_Pixel_Data_Generator
@@ -25,17 +25,17 @@ import FOUR_Threshold_Simple_Majority_Comparison
 
 # year = input("Type the year you would like to generate data for: ")
 year = "2020"
-generate_graphs = "0"
+generate_graphs = "1"
 
 print("Generating survey based data...")
 # countyTimeLine, county_yearly_value, counties = ONE_Survey_Data_Generator.extract_survey_data()
-years_for_each_county, values_for_each_county, counties = ONE_Corn_Survey_Data.extract_survey_data()
+years_for_each_county, values_for_each_county, counties = ONE_Get_Survey_Data.extract_survey_data()
 # ONE_Corn_Survey_Data.generate_survey_table(years_for_each_county, values_for_each_county, counties)
 # generate_graphs = input("Type 1 to generate graphs for survey data: ")
 
 if generate_graphs == "1":
     # ONE_Survey_Data_Generator.plot_survey_graphs(countyTimeLine, county_yearly_value, counties)
-    ONE_Corn_Survey_Data.plot_survey_graphs(years_for_each_county, values_for_each_county, counties)
+    ONE_Get_Survey_Data.plot_survey_graphs(years_for_each_county, values_for_each_county, counties)
 
 print("Generating pixel based data with a threshold of 0....")
 county_csv, years, pixel_yearly_values = THREE_Pixel_Data_Generator.extract_pixel_data()
