@@ -13,7 +13,7 @@ def get_simple_majority(valid_counties):
     print(len(file_names))
 
     # crop_number =input("Enter crop type number: ")
-    crop_number = "VALUE_" + "1"  # crop_number
+    crop_number = "VALUE_" + "5"  # crop_number
 
     simple_majority_percentage = []
     for county in file_names:
@@ -94,7 +94,7 @@ def plot_comparisons (counties_with_data, simple_majority_percentage, above_fift
     plt.axhline(y=sum(simple_majority_percentage)/len(simple_majority_percentage), c='black', label="Average SM Percentage")
     plt.axhline(y=sum(closest_threshold_values)/len(closest_threshold_values), c="green", label="Average Threshold Percentage")
     plt.xticks(x_axis)
-    plt.title("Corn 2020")
+    plt.title("Soybeans 2020")
     plt.xticks(rotation=90)
     plt.xlabel("Counties")
     plt.ylabel("Simple Majority Value as a Percentage of Survey Values")
