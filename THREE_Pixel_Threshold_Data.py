@@ -148,7 +148,7 @@ def extract_pixel_threshold_data(county_csv, years, year):
 
     full_county = []
     for county in county_csv:
-        full_county.append(county[17:-4])
+        full_county.append(county[20:-4])
 
     print(full_county)
 
@@ -191,7 +191,7 @@ def extract_pixel_threshold_data(county_csv, years, year):
         county_dfs.append(df)
 
     for county in counties_with_data:
-        new_csv = "Corn County CSVs/" + county + ".csv"
+        new_csv = "Sorghum County CSVs/" + county + ".csv"
         df = pd.read_csv(new_csv)
         necessary_county_dfs.append(df)
         necessary_csv.append(new_csv)
@@ -225,7 +225,7 @@ def extract_pixel_threshold_data(county_csv, years, year):
 
     # change for cotton
     # print(yearly_value_per_threshold[necessary_csv.index(r"County CSVs/OTHER (COMBINED) COUNTIES.csv")])
-    print(yearly_value_per_threshold[necessary_csv.index(r"Corn County CSVs/OTHER (COMBINED) COUNTIES.csv")])
+    print(yearly_value_per_threshold[necessary_csv.index(r"Sorghum County CSVs/OTHER (COMBINED) COUNTIES.csv")])
 
     # this loop adds the acreage of fields not in necessary counties to other combined counties at each threshold
     print("Adding pixel data from counties with no survey data to OTHER_COMBINED_COUNTIES")
@@ -248,9 +248,9 @@ def extract_pixel_threshold_data(county_csv, years, year):
                         list.append(total)
             for i in range(101):
                 # yearly_value_per_threshold[necessary_csv.index(r"County CSVs/OTHER (COMBINED) COUNTIES.csv")][i] +=\
-                yearly_value_per_threshold[necessary_csv.index(r"Corn County CSVs/OTHER (COMBINED) COUNTIES.csv")][i] +=\
+                yearly_value_per_threshold[necessary_csv.index(r"Sorghum County CSVs/OTHER (COMBINED) COUNTIES.csv")][i] +=\
                     list[i]
-    print(yearly_value_per_threshold[necessary_csv.index(r"Corn County CSVs/OTHER (COMBINED) COUNTIES.csv")])
+    print(yearly_value_per_threshold[necessary_csv.index(r"Sorghum County CSVs/OTHER (COMBINED) COUNTIES.csv")])
 
 
     # this list contains the normalized pixel values based on survey data for each county

@@ -21,11 +21,11 @@ def extract_pixel_data():
     #               r"County CSVs/OTHER (COMBINED) COUNTIES.csv", r"County CSVs/PRATT20151.csv",
     #               r"County CSVs/SEDGEWICK20173.csv", r"County CSVs/SEWARD20175.csv", r"County CSVs/STEVENS20189.csv",
     #               r"County CSVs/SUMNER20191.csv"]
-    csvs = [f for f in listdir("Corn County CSVs") if isfile(join("Corn County CSVs", f))]
+    csvs = [f for f in listdir("Sorghum County CSVs") if isfile(join("Sorghum County CSVs", f))]
     county_csv = []
     print(csvs)
     for f in csvs:
-        county_csv.append("Corn County CSVs/" + f)
+        county_csv.append("Sorghum County CSVs/" + f)
     print(county_csv)
     # Add to years to generate data for all years.
     # "AREA_2006", "AREA_2007", "AREA_2008", "AREA_2009", "AREA_2010", "AREA_2011", "AREA_2012",

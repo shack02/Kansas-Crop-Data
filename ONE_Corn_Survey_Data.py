@@ -6,7 +6,7 @@ def extract_survey_data():
     csv = "Other Crop Data (Corn and Sorghum).csv"
     df = pd.read_csv(csv)
     print(df)
-    df = df[df["Data Item"] == "CORN - ACRES PLANTED"]
+    df = df[df["Data Item"] == "SORGHUM - ACRES PLANTED"]
     print(df)
 
     counties = df["County"].unique().tolist()
@@ -24,17 +24,6 @@ def extract_survey_data():
         values = [int(i) for i in values]
         values_for_each_county.append(values)
 
-    survey_year_values = []
-    i = 0
-    while i < len(years_for_each_county):
-        j = 0
-        while j < len(years_for_each_county[i]):
-            if years_for_each_county[i][j] == 2017:
-                survey_year_values.append(values_for_each_county[i][j])
-            j += 1
-        i += 1
-    print(survey_year_values)
-
     return years_for_each_county, values_for_each_county, counties
 
 
@@ -45,7 +34,7 @@ def plot_survey_graphs(years_for_each_county, values_for_each_county, counties):
         y_axis = values_for_each_county[current_index]
         plt.bar(x_axis, y_axis)
         plt.xticks(x_axis)
-        plt.title(county + " Survey: Corn Acres Planted")
+        plt.title(county + " Survey: Sorghum Acres Planted")
         plt.xlabel("Year")
         plt.ylabel("Value")
         # plot = plt.figure(counties.index(county))

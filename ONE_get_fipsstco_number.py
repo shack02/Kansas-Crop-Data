@@ -16,16 +16,16 @@ def get_county_ids_with_data():
 
     counties = [county.upper() for county in counties]
 
-    return county_ID, counties
+    # return county_ID, counties
 
-    # county_id_with_data = []
-    # proper_counties = []
-    # for county in counties:
-    #     i = counties.index(county)
-    #     for county2 in counties_with_data:
-    #         if county2 == county:
-    #             county_id_with_data.append(str(county_ID[i]))
-    #             proper_counties.append(county)
-    #
-    # return county_id_with_data, proper_counties
+    county_id_with_data = []
+    proper_counties = []
+    for county in counties:
+        i = counties.index(county)
+        for county2 in counties_with_data:
+            if county2 == county:
+                county_id_with_data.append(str(county_ID[i]))
+                proper_counties.append(county)
+
+    return county_id_with_data, proper_counties
 
