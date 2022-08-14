@@ -25,7 +25,7 @@ import FOUR_Threshold_Simple_Majority_Comparison
 
 # year = input("Type the year you would like to generate data for: ")
 year = "2020"
-generate_graphs = "1"
+generate_graphs = "0"
 
 print("Generating survey based data...")
 # countyTimeLine, county_yearly_value, counties = ONE_Survey_Data_Generator.extract_survey_data()
