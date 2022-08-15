@@ -8,7 +8,7 @@ def table_generator(counties, normalized_county_data, thresholds, state_normaliz
     for county in counties:
         df[county] = normalized_county_data[counties.index(county)]
     df["State"] = state_normalized_data
-    filepath = Path(r'C:\Users\Sean\PycharmProjects\Cotton_In_Kansas\Tables\Corn 2016 Table.csv')
+    filepath = Path(r'C:\Users\Sean\Desktop\2020 Graphs and Tables\Sorghum\Sorghum 2020 Table.csv')
     filepath.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(filepath)
 
@@ -18,6 +18,6 @@ def county_distribution(counties, thresholds, county_distributions):
     for county in counties:
         i = counties.index(county)
         df[county] = county_distributions[i]
-    filepath = Path(r"Frequency Distribution Tables\Corn Frequency Distribution Table 2016.csv")
+    filepath = Path(r"C:\Users\Sean\Desktop\2020 Graphs and Tables\Sorghum\Sorghum Frequency Distribution Table 2020.csv")
     filepath.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(filepath)

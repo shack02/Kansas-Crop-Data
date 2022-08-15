@@ -19,7 +19,7 @@ def get_simple_majority(valid_counties):
     for county in file_names:
         if county != 'Majority Crop by County CSVs/OTHER (COMBINED) COUNTIES.csv':
             df = pd.read_csv(county)
-            df = df[df["MAJORITY_TYPE"] == crop_number]
+            df = df[df["MAJORITY_VALUE"] == df[crop_number]]
             total_area = df["AREA"].sum()/4046.86
             simple_majority_percentage.append(total_area)
         else:
@@ -27,7 +27,7 @@ def get_simple_majority(valid_counties):
             for csv in csvs:
                 if "Majority Crop by County CSVs/" + csv not in file_names:
                     df = pd.read_csv("Majority Crop by County CSVs/" + csv)
-                    df = df[df["MAJORITY_TYPE"] == crop_number]
+                    df = df[df["MAJORITY_VALUE"] == df[crop_number]]
                     total_area += df["AREA"].sum() / 4046.86
             simple_majority_percentage.append(total_area)
 
@@ -35,7 +35,7 @@ def get_simple_majority(valid_counties):
     for county in file_names:
         if county != 'Majority Crop by County CSVs/OTHER (COMBINED) COUNTIES.csv':
             df = pd.read_csv(county)
-            df = df[df["MAJORITY_TYPE"] == crop_number]
+            df = df[df["MAJORITY_VALUE"] == df[crop_number]]
             df = df[df["MAJORITY_PERCENTAGE"] >= .50]
             total_area = df["AREA"].sum()/4046.86
             above_fifty_percentage.append(total_area)
@@ -44,7 +44,7 @@ def get_simple_majority(valid_counties):
             for csv in csvs:
                 if "Majority Crop by County CSVs/" + csv not in file_names:
                     df = pd.read_csv("Majority Crop by County CSVs/" + csv)
-                    df = df[df["MAJORITY_TYPE"] == crop_number]
+                    df = df[df["MAJORITY_VALUE"] == df[crop_number]]
                     df = df[df["MAJORITY_PERCENTAGE"] >= .50]
                     total_area = df["AREA"].sum() / 4046.86
             above_fifty_percentage.append(total_area)

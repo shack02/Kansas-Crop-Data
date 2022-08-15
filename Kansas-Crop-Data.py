@@ -54,11 +54,13 @@ normalized_state_values = THREE_Pixel_Threshold_Data.generate_state_data(yearly_
 
 # generate_graphs = input("Type 1 to generate graphs for pixel threshold data: ")
 
+generate_graphs = "1"
 if generate_graphs == "1":
     THREE_Pixel_Threshold_Data.plot_pixel_threshold_data(
         normalized_yearly_value_per_threshold, thresholds, necessary_csv)
     THREE_Pixel_Threshold_Data.plot_pixel_threshold_data_state(
         normalized_state_values, thresholds)
+generate_graphs = "0"
 
 county_distributions = FOUR_Field_Frequency_Distribution.data_generator(thresholds, county_csv, year)
 # generate_graphs = input("Type 1 to generate graphs for frequency distribution data: ")
@@ -75,5 +77,5 @@ simple_majority_percentage, above_fifty_percent = \
 FOUR_Threshold_Simple_Majority_Comparison.plot_comparisons(counties_with_data, \
                         simple_majority_percentage, above_fifty_percent, survey_year_values, closest_threshold_values)
 
-# FOUR_Table_Generator.table_generator(necessary_csv, normalized_yearly_value_per_threshold, thresholds, normalized_state_values)
-# FOUR_Table_Generator.county_distribution(counties, thresholds,county_distributions)
+FOUR_Table_Generator.table_generator(necessary_csv, normalized_yearly_value_per_threshold, thresholds, normalized_state_values)
+FOUR_Table_Generator.county_distribution(counties, thresholds,county_distributions)
