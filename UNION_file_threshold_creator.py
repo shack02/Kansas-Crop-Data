@@ -166,6 +166,33 @@ def graph_normalized_threshold_values(normalized_thresholds_df, crop_types, year
         i += 1
 
 
+# This function splits a county's dataframe into dataframes containing fields identified using the weighted algorithm approach
+def weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_county,crop_types_for_county,crop_weights):
+    # Generates the crop weights
+    i = 0
+    for df in split_dfs:
+        area_fields = df["AREA"].sum() / 4046.86
+        crop_weights[i] = survey_values_for_county[i] / area_fields
+        i += 1
+    weight_order = []
+    # Generates the order of the crops to be checked
+    for weight in crop_weights:
+        min = crop_weights.min()
+        index = crop_weights.index(min)
+        crop_weights[index] = 0
+        weight_order.append(index)
+    # Splits the county_df into the crop_dfs based on the order of the weights and the current threshold
+    for index in weight_order:
+        # Adds the fields with a threshold >= the current threshold in the order of the weights.
+        split_dfs[index] += county_df[county_df[crop_types_for_county[index]].astype(float) >= threshold]
+        # Trims the original dataframe of the fields greater than the threshold.
+        county_df = county_df[crop_types_for_county[index].astype(float) < threshold]
+    threshold -= 1
+    if threshold >= 0:
+        return weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_county,crop_types_for_county,crop_weights)
+    return split_dfs, county_df
+
+
 survey_file = "Other Crop Data (Corn, Cotton, Soybeans, Sorghum,  and Wheat).csv"
 county_information_file = "Cotton_County_Kansas.csv"
 year = 2020
