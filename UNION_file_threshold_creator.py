@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+from pathlib import Path
 import numpy as np
 # This file contains methods to create threshold data from the union dataset and compare it to the survey values.
 
@@ -90,11 +91,16 @@ def get_county_dfs(df, counties_for_each_crop):
     print(len(county_dfs))
     all_ids = crop_df['FIPSSTCO'].unique().tolist()
 
+    necessary_counties = [str(x) for x in counties_for_each_crop]
     county_df = crop_df
+    print(all_ids)
+    print(necessary_counties)
+    print(len(county_df))
     for id in all_ids:
-        if id in counties_for_each_crop:
+        if id in necessary_counties:
             county_df = county_df[county_df["FIPSSTCO"] != str(id)]
-
+    print("Crop df length after cut ************************************************************")
+    print(len(county_df))
     county_dfs.append(county_df)
     print(len(county_dfs))
     return county_dfs
@@ -165,7 +171,25 @@ def graph_normalized_threshold_values(normalized_thresholds_df, crop_types, year
         plt.show()
         i += 1
 
+def create_threshold_tables(normalized_thresholds_dfs, crop_types, county_distributions):
+    index = 0
+    for df in normalized_thresholds_dfs:
+        print(df)
+        df.to_csv(r"C:\Users\Sean\PycharmProjects\Kansas-Crop-Data\2020 Tables Using Union Method\\" + str(crop_types[index]) + " " + str(year))
+        index += 1
 
+
+
+    # df = pd.DataFrame(index=thresholds, columns=counties)
+    # for county in counties:
+    #     i = counties.index(county)
+    #     df[county] = county_distributions[i]
+    # filepath = Path(r"Frequency Distribution Tables\Corn Frequency Distribution Table 2016.csv")
+    # filepath.parent.mkdir(parents=True, exist_ok=True)
+    # df.to_csv(filepath)
+
+# Create threshold and county table for cotton/wheat
+# Remove fields with crops that are the majority and aren't being searched for before searching county csvs
 # This function splits a county's dataframe into dataframes containing fields identified using the weighted algorithm approach
 def weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_county,crop_types_for_county,crop_weights):
     # Generates the crop weights
@@ -182,6 +206,7 @@ def weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_
         crop_weights[index] = 0
         weight_order.append(index)
     # Splits the county_df into the crop_dfs based on the order of the weights and the current threshold
+    # Single out threshold before splitting
     for index in weight_order:
         # Adds the fields with a threshold >= the current threshold in the order of the weights.
         split_dfs[index] += county_df[county_df[crop_types_for_county[index]].astype(float) >= threshold]
@@ -244,3 +269,4 @@ print(normalized_threshold_dfs[-1])
 print("Graphing threshold values")
 graph_normalized_threshold_values(normalized_threshold_dfs, crop_types, year, thresholds)
 
+create_threshold_tables(normalized_threshold_dfs, crop_types, year)

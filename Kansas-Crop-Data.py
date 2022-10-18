@@ -17,9 +17,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 import ONE_Corn_Survey_Data
 import THREE_Pixel_Threshold_Data
-import ONE_Survey_Data_Generator
 import THREE_Pixel_Data_Generator
-import FOUR_Table_Generator
 import FOUR_Field_Frequency_Distribution
 import FOUR_Threshold_Simple_Majority_Comparison
 
@@ -73,7 +71,7 @@ simple_majority_percentage, above_fifty_percent = \
     FOUR_Threshold_Simple_Majority_Comparison.get_simple_majority(counties_with_data)
 
 FOUR_Threshold_Simple_Majority_Comparison.plot_comparisons(counties_with_data, \
-                        simple_majority_percentage, above_fifty_percent, survey_year_values, closest_threshold_values)
+                                                           simple_majority_percentage, above_fifty_percent, survey_year_values, closest_threshold_values)
 
 # FOUR_Table_Generator.table_generator(necessary_csv, normalized_yearly_value_per_threshold, thresholds, normalized_state_values)
 # FOUR_Table_Generator.county_distribution(counties, thresholds,county_distributions)
