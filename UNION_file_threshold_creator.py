@@ -178,7 +178,13 @@ def create_threshold_tables(normalized_thresholds_dfs, crop_types, county_distri
         df.to_csv(r"C:\Users\Sean\PycharmProjects\Kansas-Crop-Data\2020 Tables Using Union Method\\" + str(crop_types[index]) + " " + str(year))
         index += 1
 
-
+def create_area_threshold_tables(thresholds_dfs, crop_types, county_distributions):
+    index = 0
+    for df in thresholds_dfs:
+        print(df)
+        df.to_csv(r"C:\Users\Sean\PycharmProjects\Kansas-Crop-Data\2020 Area Tables Using Union Method\\" + str(
+            crop_types[index]) + " " + str(year))
+        index += 1
 
     # df = pd.DataFrame(index=thresholds, columns=counties)
     # for county in counties:
@@ -260,6 +266,8 @@ threshold_crop_data = get_threshold_crop_data(thresholds, county_dfs_by_crop, cr
 
 print("Creating threshold crop dataframes")
 threshold_crop_dfs = create_threshold_dfs(threshold_crop_data, crop_ids, county_names_for_each_crop, thresholds)
+
+create_area_threshold_tables(threshold_crop_dfs, crop_types, year)
 
 print("Normalizing threshold values to their respective survey values")
 normalized_threshold_dfs = normalize_threshold_values(survey_crop_dfs, threshold_crop_dfs)
