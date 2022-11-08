@@ -1,2 +1,7 @@
-string = "A FIRST APPROACH TO THE AUTOMATIC DETECTION OF MARINE LITTER IN SAR IMAGES USING ARTIFICIAL INTELLIGENCE"
-print(string.lower())
+i = 0
+element = 27
+while i < 14:
+    element = element * 27
+    element = element % 28
+    print(element)
+    i += 1

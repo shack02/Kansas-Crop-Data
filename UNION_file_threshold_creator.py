@@ -222,6 +222,17 @@ def weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_
     if threshold >= 0:
         return weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_county,crop_types_for_county,crop_weights)
     return split_dfs, county_df
+# Create threshold and county table for cotton
+# Remove fields with crops that are the majority and aren't being searched for before searching county csvs
+
+def create_survey_data_spreadsheet(survey_crop_dfs, crop_types):
+    index = 0
+    for df in survey_crop_dfs:
+        print(df)
+        df.to_csv(r"2020 Survey Crop Tables" + str(
+            crop_types[index]) + " " + str(year))
+        index += 1
+
 
 
 survey_file = "Other Crop Data (Corn, Cotton, Soybeans, Sorghum,  and Wheat).csv"
@@ -249,6 +260,12 @@ for crop in crop_types:
     county_names_for_each_crop.append(counties)
     survey_crop_dfs.append(survey_crop_df)
 
+print("SURVEY CROP DFS")
+print(survey_crop_dfs)
+
+
+
+
 crop_dfs = []
 for crop_id in crop_ids:
     crop_df = get_crop_threshold_df(field_df, crop_id)
@@ -267,7 +284,7 @@ threshold_crop_data = get_threshold_crop_data(thresholds, county_dfs_by_crop, cr
 print("Creating threshold crop dataframes")
 threshold_crop_dfs = create_threshold_dfs(threshold_crop_data, crop_ids, county_names_for_each_crop, thresholds)
 
-create_area_threshold_tables(threshold_crop_dfs, crop_types, year)
+# create_area_threshold_tables(threshold_crop_dfs, crop_types, year)
 
 print("Normalizing threshold values to their respective survey values")
 normalized_threshold_dfs = normalize_threshold_values(survey_crop_dfs, threshold_crop_dfs)
@@ -277,4 +294,6 @@ print(normalized_threshold_dfs[-1])
 print("Graphing threshold values")
 graph_normalized_threshold_values(normalized_threshold_dfs, crop_types, year, thresholds)
 
-create_threshold_tables(normalized_threshold_dfs, crop_types, year)
+# create_threshold_tables(normalized_threshold_dfs, crop_types, year)
+
+create_survey_data_spreadsheet(survey_crop_dfs,crop_types)
