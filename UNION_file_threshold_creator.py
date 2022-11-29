@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
 import numpy as np
+import random
 # This file contains methods to create threshold data from the union dataset and compare it to the survey values.
 
 
@@ -248,7 +249,6 @@ for crop in crop_types:
     counties_for_each_crop.append(county_codes)
     county_names_for_each_crop.append(counties)
     survey_crop_dfs.append(survey_crop_df)
-
 crop_dfs = []
 for crop_id in crop_ids:
     crop_df = get_crop_threshold_df(field_df, crop_id)
@@ -261,20 +261,159 @@ for crop_df in crop_dfs:
     i += 1
     county_dfs_by_crop.append(county_dfs)
 
-print("Processing threshold crop data")
-threshold_crop_data = get_threshold_crop_data(thresholds, county_dfs_by_crop, crop_ids, county_names_for_each_crop)
 
-print("Creating threshold crop dataframes")
-threshold_crop_dfs = create_threshold_dfs(threshold_crop_data, crop_ids, county_names_for_each_crop, thresholds)
+# print("Processing threshold crop data")
+# threshold_crop_data = get_threshold_crop_data(thresholds, county_dfs_by_crop, crop_ids, county_names_for_each_crop)
+#
+# print("Creating threshold crop dataframes")
+# threshold_crop_dfs = create_threshold_dfs(threshold_crop_data, crop_ids, county_names_for_each_crop, thresholds)
+#
+# create_area_threshold_tables(threshold_crop_dfs, crop_types, year)
+#
+# print("Normalizing threshold values to their respective survey values")
+# normalized_threshold_dfs = normalize_threshold_values(survey_crop_dfs, threshold_crop_dfs)
+#
+# print(normalized_threshold_dfs[-1])
+#
+# print("Graphing threshold values")
+# graph_normalized_threshold_values(normalized_threshold_dfs, crop_types, year, thresholds)
+#
+# create_threshold_tables(normalized_threshold_dfs, crop_types, year)
 
-create_area_threshold_tables(threshold_crop_dfs, crop_types, year)
 
-print("Normalizing threshold values to their respective survey values")
-normalized_threshold_dfs = normalize_threshold_values(survey_crop_dfs, threshold_crop_dfs)
+def get_individual_area(string,df):
+    indexes = []
+    total_area = 0
+    i = 0
+    for _ in string:
+        if _ == "1":
+            indexes.append(i)
+        i += 1
+    trimmed_df = df.iloc[indexes]
+    total_area = trimmed_df["AREA"].sum() / 4046.86
+    return total_area
 
-print(normalized_threshold_dfs[-1])
 
-print("Graphing threshold values")
-graph_normalized_threshold_values(normalized_threshold_dfs, crop_types, year, thresholds)
 
-create_threshold_tables(normalized_threshold_dfs, crop_types, year)
+
+
+# Adapted from Geeksforgeeks genAI example
+# number of individuals in a generation
+POPULATION_SIZE = 100
+
+# 0 if field not counted, 1 if field counted for corn
+GENES = "01"
+
+# Target is the output that is desired,
+TARGET = "1"
+
+LENGTH = len(county_dfs_by_crop[0][5])
+print(LENGTH)
+# Target value of a string of 0s with a 1 at the end to test creating
+TARGET = 0
+
+
+survey_value = survey_crop_dfs[0].loc[survey_crop_dfs[0]["County"] == "RICE"]
+survey_area = int(float(survey_value["Value"].iat[0].replace(',', '')))
+# Class representing an individual in a population
+class Individual(object):
+
+    def __init__(self,chromosome):
+        self.chromosome = chromosome
+        self.fitness = self.cal_fitness()
+
+    # Mutates a random gene
+    @classmethod
+    def mutated_genes(self):
+        global GENES
+        gene = random.choice(GENES)
+        return gene
+
+    # Creates a chromosome
+    @classmethod
+    def create_gnome(self):
+        global LENGTH
+        return [self.mutated_genes() for _ in range(LENGTH)]
+
+    # Mates 2 chromosomes together
+    def mate(self, par2):
+        child_chromosome = []
+        for gp1, gp2 in zip(self.chromosome, par2.chromosome):
+
+            # random probability
+            prob = random.random()
+
+            if prob < 0.45:
+                child_chromosome.append(gp1)
+
+            elif prob < 0.9:
+                child_chromosome.append(gp2)
+
+            else:
+                child_chromosome.append(self.mutated_genes())
+
+        return Individual(child_chromosome)
+
+    # Calculates the fitness of the individual
+    def cal_fitness(self):
+        global TARGET
+        fitness = 0
+        # fitness = selected fields area/survey area - 1
+        area = get_individual_area(self.chromosome, county_dfs_by_crop[0][5])
+        fitness = int(area) / survey_area - 1
+        return fitness
+
+
+def main():
+    global POPULATION_SIZE
+
+    generation = 1
+
+    found = False
+    population = []
+
+    for _ in range(POPULATION_SIZE):
+        gnome = Individual.create_gnome()
+        population.append(Individual(gnome))
+
+    while not found:
+
+
+            population = sorted(population, key = lambda x: x.fitness)
+
+
+            if population[0].fitness <= TARGET:
+                found = True
+                break
+
+
+            new_generation = []
+
+
+            s = int((10 * POPULATION_SIZE) / 100)
+            new_generation.extend(population[:s])
+
+
+            s = int((90 * POPULATION_SIZE) / 100)
+            for _ in range(s):
+                parent1 = random.choice(population[:50])
+                parent2 = random.choice(population[:50])
+                child = parent1.mate(parent2)
+                new_generation.append(child)
+
+            population = new_generation
+
+            print("Generation: {}\tString: {}\tFitness: {}". \
+                  format(generation,
+                         "".join(population[0].chromosome),
+                         population[0].fitness))
+
+            generation += 1
+
+    print("Generation: {}\tString: {}\tFitness: {}". \
+          format(generation,
+                 "".join(population[0].chromosome),
+                 population[0].fitness))
+
+if __name__ == '__main__':
+    main()
