@@ -1,11 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from pathlib import Path
-import numpy as np
-# This file contains methods to create threshold data from the union dataset and compare it to the survey values.
 
 
-# This function uses the survey_file and year given to create a dataframe containing survey data.
+
 def get_survey_df(survey_file, year):
     survey_df = pd.read_csv(survey_file)
     survey_df = survey_df[survey_df["Year"] == int(year)]
@@ -262,81 +259,10 @@ def select_majority_crops(county_df, county, survey_crop_dfs):
 
 def create_survey_data_spreadsheet(survey_crop_dfs, crop_types):
     index = 0
+    year = 2020
     for df in survey_crop_dfs:
         print(df)
         df.to_csv(r"2020 Survey Crop Tables" + str(
             crop_types[index]) + " " + str(year))
         index += 1
 
-
-
-survey_file = "Other Crop Data (Corn, Cotton, Soybeans, Sorghum,  and Wheat).csv"
-county_information_file = "Cotton_County_Kansas.csv"
-year = 2020
-survey_df = get_survey_df(survey_file, year)
-crop_types = survey_df["Commodity"].unique().tolist()
-field_file = "CLU_CDL_KS_2020_UNION.txt"
-majority_file = "CLU_CDL_2020_MajorityCrop.txt"
-crop_id_file = "CDL_2020_Count.txt"
-crop_ids = get_crop_identifiers(crop_id_file, crop_types)
-field_df = get_field_df(field_file, majority_file)
-thresholds = []
-for i in range(101):
-    thresholds.append(i / 100)
-
-survey_crop_dfs = []
-counties_for_each_crop = []
-county_names_for_each_crop = []
-for crop in crop_types:
-    survey_crop_df = get_counties_with_survey_data(survey_df, crop)
-    counties = survey_crop_df["County"].unique().tolist()
-    county_codes = get_county_code(county_information_file, counties)
-    counties_for_each_crop.append(county_codes)
-    county_names_for_each_crop.append(counties)
-    survey_crop_dfs.append(survey_crop_df)
-
-print("SURVEY CROP DFS")
-print(survey_crop_dfs)
-all_counties_with_survey_value_codes = []
-for counties in counties_for_each_crop:
-    all_counties_with_survey_value_codes.append(counties)
-
-crop_dfs = []
-for crop_id in crop_ids:
-    crop_df = get_crop_threshold_df(field_df, crop_id)
-    crop_dfs.append(crop_df)
-
-county_dfs_by_crop = []
-i = 0
-for crop_df in crop_dfs:
-    county_dfs = get_county_dfs(crop_df, counties_for_each_crop[i])
-    i += 1
-    county_dfs_by_crop.append(county_dfs)
-
-print("Processing threshold crop data")
-threshold_crop_data = get_threshold_crop_data(thresholds, county_dfs_by_crop, crop_ids, county_names_for_each_crop)
-
-print("Creating threshold crop dataframes")
-threshold_crop_dfs = create_threshold_dfs(threshold_crop_data, crop_ids, county_names_for_each_crop, thresholds)
-
-# create_area_threshold_tables(threshold_crop_dfs, crop_types, year)
-
-print("Normalizing threshold values to their respective survey values")
-normalized_threshold_dfs = normalize_threshold_values(survey_crop_dfs, threshold_crop_dfs)
-
-print(normalized_threshold_dfs[-1])
-
-print("Graphing threshold values")
-graph_normalized_threshold_values(normalized_threshold_dfs, crop_types, year, thresholds)
-
-# create_threshold_tables(normalized_threshold_dfs, crop_types, year)
-
-create_survey_data_spreadsheet(survey_crop_dfs,crop_types)
-
-
-county_dfs = get_county_dfs(field_df, counties)
-# County_dfs are for each crop TODO create df for containing all fields for a county using get_county_dfs
-i=0
-for county_df in county_dfs:
-    select_majority_crops(county_df, counties[i], survey_crop_dfs)
-    i += 1
