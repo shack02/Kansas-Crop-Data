@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import math
+import numpy as np
+import scipy
 
 
 def get_survey_df(survey_file, year):
@@ -54,6 +56,49 @@ def get_field_df(field_file,majority_file):
         i += 1
     field_df = pd.concat(chunk_list)
     return field_df
+
+# creates dataframe containing all fields without adding double cropped values
+# used for calculating statistcal groupings
+def get_field_df_without_double_crops(field_file,majority_file):
+    chunk_list = []
+    majority_list = []
+    for df_chunk in pd.read_csv(majority_file, chunksize=10000):
+        majority_list.append(df_chunk)
+    i=0
+    for df_chunk in pd.read_csv(field_file, chunksize=10000):
+        df_chunk["AREA"] = majority_list[i]["AREA"]
+        df_chunk["FIPSSTCO"] = df_chunk["SCTFS"].astype(str).str.slice(0, 5)
+        df_chunk["CORN%"] = df_chunk["VALUE_1"] / df_chunk["AREA"]
+        df_chunk["SORGHUM%"] = df_chunk["VALUE_4"] / df_chunk["AREA"]
+        df_chunk["SOYBEANS%"] = df_chunk["VALUE_5"] / df_chunk["AREA"]
+        df_chunk["WHEAT%"] = df_chunk["VALUE_24"] / df_chunk["AREA"]
+        df_chunk["COTTON%"] = df_chunk["VALUE_2"] / df_chunk["AREA"]
+        headers = df_chunk.head()
+        value_columns = []
+        for string in headers:
+            if "VALUE_" in string:
+                value_columns.append(string)
+        df_chunk["Sum"] = df_chunk[value_columns].sum(axis=1)
+        df_chunk["NumberCropsPresent"] = df_chunk[value_columns].astype(bool).sum(axis=1)
+        df_chunk["AverageCropValue"] = df_chunk["Sum"] / df_chunk["NumberCropsPresent"]
+        df_chunk["StandardDeviation"] = np.nanstd(df_chunk[df_chunk[value_columns] != 0].astype(float), axis=1)
+        df_chunk["NormalizedStandardDeviation"] = df_chunk["StandardDeviation"] / df_chunk["AverageCropValue"]
+        df_chunk["SSE"] = df_chunk["StandardDeviation"]**2 * df_chunk["NumberCropsPresent"]
+        df_chunk["NormalizedVariance"] = df_chunk["StandardDeviation"]**2 / df_chunk["AverageCropValue"]
+        df_chunk["Skewness"] = scipy.stats.skew((df_chunk[df_chunk[value_columns] != 0].astype(float)), axis=1, nan_policy="omit", keepdims=True)
+        # print((
+        #     (df_chunk[value_columns] - df_chunk["AverageCropValue"])
+        #     / df_chunk["NumberCropsPresent"]))
+        # df_chunk["StandardDeviation"] = np.sqrt((
+        #     (df_chunk[value_columns][df_chunk[value_columns] != 0] - df_chunk["AverageCropValue"])
+        #     / df_chunk["NumberCropsPresent"]).astype(float))
+        # df_chunk["ZScore"] = ((df_chunk[df_chunk[value_columns].astype(bool) == 1] -
+        #                        df_chunk["AverageCropValue"]) / df_chunk["StandardDeviation"])
+        chunk_list.append(df_chunk)
+        i += 1
+    field_df = pd.concat(chunk_list)
+    return field_df
+
 
 
 # This function finds the percentage coverage of the crop given in each field

@@ -47,6 +47,7 @@ print(crop_ids)
 threshold = 1.00
 index = 0
 current_df = county_dfs[0]
+# This loop goes through each county's crop survey values and allocates fields until the survey values are reached
 for survey_values in survey_values_for_each_county:
     threshold = 1.00
     final_thresholds_for_each_crop_in_county = [0]*len(survey_values)

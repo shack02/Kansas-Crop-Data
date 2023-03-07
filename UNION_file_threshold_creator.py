@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import math
 from pathlib import Path
 import numpy as np
+
+
 # This file contains methods to create threshold data from the union dataset and compare it to the survey values.
 
 
@@ -28,25 +31,25 @@ def get_county_code(county_information_file, counties):
 # Adds the value of double cropped crops to the main crop
 # Creates a FIPSSTCO column
 # Creates columns containing percentage coverage of the specified crop
-def get_field_df(field_file,majority_file):
+def get_field_df(field_file, majority_file):
     chunk_list = []
     majority_list = []
     for df_chunk in pd.read_csv(majority_file, chunksize=10000):
         majority_list.append(df_chunk)
-    i=0
+    i = 0
     for df_chunk in pd.read_csv(field_file, chunksize=10000):
         df_chunk["AREA"] = majority_list[i]["AREA"]
         # Corn
-        df_chunk["VALUE_1"] = df_chunk["VALUE_1"] + df_chunk["VALUE_225"] + df_chunk["VALUE_226"] + df_chunk["VALUE_228"]
+        # df_chunk["VALUE_1"] = df_chunk["VALUE_1"] + df_chunk["VALUE_225"] + df_chunk["VALUE_226"] + df_chunk["VALUE_228"]
         # Sorghum
-        df_chunk["VALUE_4"] = df_chunk["VALUE_4"] + df_chunk["VALUE_236"]
+        # df_chunk["VALUE_4"] = df_chunk["VALUE_4"] + df_chunk["VALUE_236"]
         # Soybeans
-        df_chunk["VALUE_5"] = df_chunk["VALUE_5"] + df_chunk["VALUE_26"] + df_chunk["VALUE_240"] + df_chunk["VALUE_254"]
+        # df_chunk["VALUE_5"] = df_chunk["VALUE_5"] + df_chunk["VALUE_26"] + df_chunk["VALUE_240"] + df_chunk["VALUE_254"]
         # Wheat
-        df_chunk["VALUE_24"] = df_chunk["VALUE_24"] + df_chunk["VALUE_26"] + df_chunk["VALUE_225"] + df_chunk[
-            "VALUE_236"] + df_chunk["VALUE_238"]
+        # df_chunk["VALUE_24"] = df_chunk["VALUE_24"] + df_chunk["VALUE_26"] + df_chunk["VALUE_225"] + df_chunk[
+        #    "VALUE_236"] + df_chunk["VALUE_238"]
         # Cotton
-        df_chunk["VALUE_2"] = df_chunk["VALUE_2"] + df_chunk["VALUE_238"]
+        # df_chunk["VALUE_2"] = df_chunk["VALUE_2"] + df_chunk["VALUE_238"]
         df_chunk["FIPSSTCO"] = df_chunk["SCTFS"].astype(str).str.slice(0, 5)
         df_chunk["CORN%"] = df_chunk["VALUE_1"] / df_chunk["AREA"]
         df_chunk["SORGHUM%"] = df_chunk["VALUE_4"] / df_chunk["AREA"]
@@ -135,7 +138,7 @@ def create_threshold_dfs(threshold_crop_data, crop_ids, county_names_for_each_cr
     i = 0
     threshold_crop_dfs = []
     for crop_threshold_values_by_county in threshold_crop_data:
-        crop_df = pd.DataFrame(index =thresholds, columns =[county_names_for_each_crop[i]])
+        crop_df = pd.DataFrame(index=thresholds, columns=[county_names_for_each_crop[i]])
         j = 0
         for county in county_names_for_each_crop[i]:
             crop_df[county] = crop_threshold_values_by_county[j]
@@ -179,12 +182,15 @@ def graph_normalized_threshold_values(normalized_thresholds_df, crop_types, year
         plt.show()
         i += 1
 
+
 def create_threshold_tables(normalized_thresholds_dfs, crop_types, county_distributions):
     index = 0
     for df in normalized_thresholds_dfs:
         print(df)
-        df.to_csv(r"C:\Users\Sean\PycharmProjects\Kansas-Crop-Data\2020 Tables Using Union Method\\" + str(crop_types[index]) + " " + str(year))
+        df.to_csv(r"C:\Users\Sean\PycharmProjects\Kansas-Crop-Data\2020 Tables Using Union Method\\" + str(
+            crop_types[index]) + " " + str(year))
         index += 1
+
 
 def create_area_threshold_tables(thresholds_dfs, crop_types, county_distributions):
     index = 0
@@ -202,10 +208,12 @@ def create_area_threshold_tables(thresholds_dfs, crop_types, county_distribution
     # filepath.parent.mkdir(parents=True, exist_ok=True)
     # df.to_csv(filepath)
 
+
 # Create threshold and county table for cotton/wheat
 # Remove fields with crops that are the majority and aren't being searched for before searching county csvs
 # This function splits a county's dataframe into dataframes containing fields identified using the weighted algorithm approach
-def weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_county,crop_types_for_county,crop_weights):
+def weighted_county_df_splitter(threshold, county_df, split_dfs, survey_values_for_county, crop_types_for_county,
+                                crop_weights):
     # Generates the crop weights
     i = 0
     for df in split_dfs:
@@ -228,8 +236,11 @@ def weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_
         county_df = county_df[crop_types_for_county[index].astype(float) < threshold]
     threshold -= 1
     if threshold >= 0:
-        return weighted_county_df_splitter(threshold,county_df,split_dfs,survey_values_for_county,crop_types_for_county,crop_weights)
+        return weighted_county_df_splitter(threshold, county_df, split_dfs, survey_values_for_county,
+                                           crop_types_for_county, crop_weights)
     return split_dfs, county_df
+
+
 # Create threshold and county table for cotton
 # Remove fields with crops that are the majority and aren't being searched for before searching county csvs
 
@@ -256,8 +267,7 @@ def select_majority_crops(county_df, county, survey_crop_dfs):
     #     if(corn_area <= survey_values[0]):
     #         corn_table = county_df[county_df["Corn Percentage"] >= i]
     #         corn_area = corn_table["AREA"].sum()
-        # if(sorghum_area <= )
-
+    # if(sorghum_area <= )
 
 
 def create_survey_data_spreadsheet(survey_crop_dfs, crop_types):
@@ -267,7 +277,6 @@ def create_survey_data_spreadsheet(survey_crop_dfs, crop_types):
         df.to_csv(r"2020 Survey Crop Tables" + str(
             crop_types[index]) + " " + str(year))
         index += 1
-
 
 
 survey_file = "Other Crop Data (Corn, Cotton, Soybeans, Sorghum,  and Wheat).csv"
@@ -331,12 +340,11 @@ graph_normalized_threshold_values(normalized_threshold_dfs, crop_types, year, th
 
 # create_threshold_tables(normalized_threshold_dfs, crop_types, year)
 
-create_survey_data_spreadsheet(survey_crop_dfs,crop_types)
-
+create_survey_data_spreadsheet(survey_crop_dfs, crop_types)
 
 county_dfs = get_county_dfs(field_df, counties)
 # County_dfs are for each crop TODO create df for containing all fields for a county using get_county_dfs
-i=0
+i = 0
 for county_df in county_dfs:
     select_majority_crops(county_df, counties[i], survey_crop_dfs)
     i += 1
